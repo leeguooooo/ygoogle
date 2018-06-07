@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width">
+    <meta charset="utf-8">
+    <title>YGoogle | 了解移动开发的一切</title>
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <script src="//common.qunarzz.com/lib/prd/jquery/3.1.1/jquery.min.js"></script>
+    <script src="./jquery.tmpl.js"></script>
+    <script src="./data.js"></script>
+    <script type="text/x-jquery-tmpl" id="search">
+        <ul class="m-search-group">
+            {{each(i, item) result}}
+            <li class="m-search-item">
+                <p class="ui-title">${item.title}</p>
+                <p class="ui-url">${item.url}</p>
+            </li>
+            {{/each}}
+        </ul>
+    </script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+        .m-container {
+            box-sizing: border-box;
+            width: 600px;
+            margin: 150px auto;
+            text-align: center;
+            transition: all .4s;
+        }
+
+        /* header */
+        .m-header {
+            padding: 0 30px;
+        }
+        .m-nav,
+        .m-nav-item {
+            list-style: none;
+        }
+        .m-nav {
+            text-align: right;
+        }
+        .m-nav-item {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .ui-href {
+            color: #222;
+            font-size: 13px;
+            margin-left: 5px;
+            text-decoration: none;
+        }
+        .ui-href:visited {
+            color: #222;
+        }
+        .ui-href:hover {
+            text-decoration: underline;
+        }
+        .ui-user-img {
+            border-radius: 50%;
+            display: block;
+            margin: -1px;
+            overflow: hidden;
+            position: relative;
+            height: 32px;
+            width: 32px;
+            margin-left: 5px;
+            background-image: url(ymfe.jpg);
+            background-size: contain;
+            vertical-align: middle;
+        }
+
+        /* LOGO */
+        .m-img {
+          display: inline-block;
+          width: 300px;
+          position: relative;
+        }
+        .ui-img {
+            width: 300px;
+        }
+        .m-img .ui-desc {
+          color: #4285f4;
+          font: 16px/16px roboto-regular, arial, sans-serif;
+          position: absolute;
+          bottom: 6px;
+          right: 14px;
+        }
+
+        /* 输入框 */
+        .ui-input {
+            box-sizing: border-box;
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 2px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            line-height: 24px;
+            box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+            transition: all 0.3s ease-in-out;
+        }
+        .ui-input:focus {
+            outline: none;
+            box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 候选框 */
+        .m-search {
+            position: relative;
+        }
+        .m-search-help {
+            cursor: pointer;
+            position: absolute;
+            right: 16px;
+            top: 21px;
+            line-height: 32px;
+            font-size: 18px;
+            width: 20px;
+            height: 23px;
+            color: #222;
+            background-image: url(help1x.png);
+            background-size: contain;
+        }
+        .m-search-help:hover .m-search-tip {
+            display: inline-block;
+        }
+        .m-search-tip {
+            display: none;
+            cursor: auto;
+            position: absolute;
+            right: -16px;
+            top: 35px;
+            z-index: 9999;
+            background-color: rgba(0, 0, 0, .8);
+            color: #fff;
+            font-size: 12px;
+            text-align: left;
+            white-space: nowrap;
+            line-height: 1.5;
+            font-weight: 200;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .m-search-tip:after{
+          content: '';
+          display: block;
+          position: absolute;
+          top: -16px;
+          right: 17px;
+          width: 0;
+          height: 0;
+          border-width: 8px;
+          border-style: solid;
+          border-color: transparent;
+          border-bottom-color: rgba(0,0,0, .8);
+        }
+        .m-search-group {
+            box-sizing: border-box;
+            position: absolute;
+            left: 0;
+            top: 55px;
+            z-index: 1;
+            width: 100%;
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-bottom-left-radius: 2px;
+            border-bottom-right-radius: 2px;
+        }
+        .m-search-item {
+            text-align: left;
+            list-style: none;
+            margin: 8px;
+            color: #333;
+            padding: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .m-search-item .ui-title,
+        .m-search-item .ui-url {
+            margin: 0;
+        }
+        .m-search-item .ui-title {
+            font-size: 14px;
+        }
+        .m-search-item .ui-url {
+            font-size: 12px;
+            color: #666;
+            white-space: nowrap;
+        }
+        .m-search-group .active {
+            background-color: #eee;
+        }
+
+        /* 按钮组 */
+        .m-group {
+            box-sizing: border-box;
+            width: 100%;
+            text-align: center;
+            padding: 16px;
+        }
+        .ui-btn {
+            position: relative;
+            user-select: none;
+            display: inline-block;
+            font-size: 13px;
+            border-radius: 2px;
+            border: 1px solid #f2f2f2;
+            color: #757575;
+            font-weight: bold;
+            background-image: -webkit-linear-gradient(top, #f5f5f5, #f1f1f1);
+            padding: 8px 16px;
+            cursor: pointer;
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        }
+        .ui-btn+.ui-btn {
+            margin-left: 4px;
+        }
+        .ui-btn:hover {
+            color: #222;
+            border: 1px solid #c6c6c6;
+            background-image: -webkit-linear-gradient(top, #f8f8f8, #f1f1f1);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+        .ui-btn:active {
+            color: #222;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 2px rgba(0, 0, 0, 0.08);
+            background-color: #666;
+        }
+        .ui-desc {
+            margin: 0 auto;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1100px) {
+            .m-container {
+                margin: 120px auto;
+                width: 500px;
+            }
+        }
+        @media (max-width: 768px) {
+            .m-container {
+                margin: 50px auto;
+                width: 100%;
+                padding: 24px;
+            }
+            .m-footer .ui-desc {
+              display: none;
+            }
+        }
+
+        /* footer */
+        .m-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: #f2f2f2;
+            line-height: 40px;
+            width: 100%;
+            overflow-x: scroll;
+            white-space: nowrap;
+        }
+        .m-footer .ui-desc {
+          float: right;
+          padding-right: 27px;
+        }
+        .m-footer .ui-href {
+            color: #666;
+            padding-left: 27px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="m-header">
+        <ul class="m-nav">
+            <li class="m-nav-item"><a class="ui-href" target="_blank" href="https://github.com/ymfe">Github</a></li>
+            <li class="m-nav-item"><a class="ui-href" target="_blank" href="http://ymfe.org/">Blog</a></li>
+            <li class="m-nav-item"><a class="ui-user-img" target="_blank" href="http://ymfe.org/about/"></a></li>
+        </ul>
+    </div>
+    <div class="m-container">
+        <div class="m-img">
+          <img src="ygoogle1x.png" alt="ysearch" class="ui-img js-img">
+          <div class="ui-desc">China</div>
+        </div>
+        <div class="m-search">
+            <input type="text" class="ui-input js-input" autofocus>
+            <div class="m-search-help js-search-help">
+                <span class="m-search-tip">你可以这样搜索：<br>
+                搜索 API: "getLocation"<br>
+                搜索 组件: "Dialog"<br>
+                搜索 文档: "chunk"<br>
+                搜索 博客: "移动 调试"<br>
+                搜索 统计: "离线包版本"<br>
+                搜索 发版记录: "QRN 2.4.0"<br>
+                ......</span>
+            </div>
+            <ul class="m-search-group" style="display:none" id="result"></ul>
+        </div>
+        <div class="m-group">
+            <div class="ui-btn js-search">Google 搜索</div>
+            <div class="ui-btn js-ymfe">使用 Workflow</div>
+        </div>
+        <p class="ui-desc">在这里可以搜索到有关 YMFE 与 移动端开发 的一切 ~</p>
+    </div>
+    <footer class="m-footer">
+        <span class="m-footer-hrefs">
+          <a class="ui-href" target="_blank" href="http://ued.qunar.com/hy2/">Hy2</a>
+          <a class="ui-href" target="_blank" href="http://ued.qunar.com/hy2/yo/">Yo</a>
+          <a class="ui-href" target="_blank" href="http://ued.qunar.com/qrn/">QRN</a>
+          <a class="ui-href" target="_blank" href="http://ued.qunar.com/qrn-web/">QRN-Web</a>
+          <a class="ui-href" target="_blank" href="http://ykit.ymfe.org/">Ykit</a>
+        </span>
+        <span class="ui-desc">Power by YMFE 2017 京ICP备17044220号</span>
+    </footer>
+
+    <script>
+        $(function() {
+            if (window.devicePixelRatio >= 2) {
+                $('.js-img').attr('src', 'ygoogle2x.png');
+                $('.js-search-help').css({
+                  backgroundImage: 'url(help2x.png)'
+                });
+            }
+
+            var timeout,
+                index = -1;
+
+            function getKeyWord() {
+                return $('.js-input').val().trim();
+            }
+
+            function doSearch(keyWord) {
+                var keyWords = keyWord.toLowerCase().split(' ').filter(function(t) {
+                        return !!t;
+                    }),
+                    result = [];
+                if (keyWord) {
+                    for (var i = 0, l = searchData.length - 1; i <= l; i++) {
+                        var item = searchData[i];
+                        if (keyWords.every(function(key) {
+                                return item.title.toLowerCase().indexOf(key) > -1 || item.url.indexOf(key) > -1;
+                            })) {
+                            result.push(item);
+                        }
+                        if (result.length === 5) {
+                            break;
+                        }
+                    }
+                }
+                index = -1;
+                if (result.length) {
+                    $('#result').html($('#search').tmpl({
+                        result: result
+                    }).html());
+                    $('#result').show();
+                } else {
+                    $('#result').html('');
+                    $('#result').hide();
+                }
+            }
+
+            $('.js-input').bind('input propertychange', function(e) {
+                var keyWord = getKeyWord();
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+                timeout = setTimeout(function() {
+                    timeout = null;
+                    doSearch(keyWord);
+                }, 500);
+            }).bind('keydown', function(e) {
+                if (e.keyCode == 40) {
+                    index ++;
+                    $('#result .active').removeClass('active');
+                    $('#result li').eq(index % $('#result li').length).addClass('active');
+                    e.preventDefault();
+                } else if (e.keyCode == 38) {
+                    if (index > 0) {
+                        index --;
+                        $('#result .active').removeClass('active');
+                        $('#result li').eq(index % $('#result li').length).addClass('active');
+                    }
+                    e.preventDefault();
+                } else if (e.keyCode == 13) {
+                    if ($('#result li').length) {
+                        if (index === -1) {
+                            index = 0;
+                        }
+                        window.open($('#result li').eq(index % $('#result li').length).find('.ui-url').text());
+                        index = -1;
+                        $('#result .active').removeClass('active');
+                        $('#result').hide();
+                        $(".js-input")[0].select();
+                        // $('.js-input').val('');
+                    } else {
+                        window.open('https://www.google.com/search?q=' + getKeyWord(), '_blank');
+                    }
+                }
+            });
+
+            $('#result').delegate('li', 'click', function() {
+                var item = $(this);
+                window.open(item.find('.ui-url').text(), '_blank');
+                index = -1;
+                $('#result .active').removeClass('active');
+                $('#result').hide();
+                $(".js-input")[0].select();
+                // $('.js-input').val('');
+            }).delegate('li', 'mouseover', function() {
+                index = -1;
+                $('#result .active').removeClass('active');
+                $(this).addClass('active');
+            });
+
+            $('.js-search').click(function() {
+                window.open('https://www.google.com/search?q=' + getKeyWord(), '_blank');
+            });
+
+            $('.js-ymfe').click(function() {
+                window.open('http://gitlab.corp.qunar.com/mfe/ygoogle/tree/master/workflow', '_blank');
+            });
+
+            $('body').click(function(e) {
+                if (!$.contains($('#result'), $(e.target))) {
+                    index = -1;
+                    $('#result .active').removeClass('active');
+                    $('#result').hide();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
